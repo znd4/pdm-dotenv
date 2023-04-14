@@ -1,0 +1,37 @@
+name: Tests
+
+on:
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "news/**"
+      - "*.md"
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - "docs/**"
+      - "news/**"
+      - "*.md"
+
+jobs:
+  Testing:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9, '3.10']
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up PDM
+        uses: pdm-project/setup-pdm@main
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: true
+
+      - name: Install dependencies
+        run: pip install nox
+      - name: Run Tests
+        run: nox -s test-${{ matrix.python-version }}

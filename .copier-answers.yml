@@ -1,0 +1,19 @@
+# Changes here will be overwritten by Copier
+_commit: 0.4.0
+_src_path: https://github.com/pdm-project/copier-pdm.git
+author_email: zane@znd4.me
+author_fullname: Zane Dufour
+author_username: zdog234
+build_doc: true
+copyright_date: '2023'
+copyright_holder: Zane Dufour
+copyright_holder_email: zane@znd4.me
+copyright_license: MIT
+project_description: A pdm plugin that automatically loads .env files
+project_name: pdm-dotenv
+python_package_distribution_name: pdm-dotenv
+python_package_import_name: pdm_dotenv
+python_package_requires_python: '>=3.10'
+repository_name: pdm-dotenv
+repository_namespace: zdog234
+

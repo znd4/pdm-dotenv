@@ -1,0 +1,39 @@
+site_name: "pdm-dotenv"
+site_description: "A pdm plugin that automatically loads .env files"
+site_url: "https://zdog234.github.io/pdm-dotenv"
+repo_url: "https://github.com/zdog234/pdm-dotenv"
+repo_name: "zdog234/pdm-dotenv"
+site_dir: "site"
+
+nav:
+  - Home:
+    - Overview: index.md
+    - Changelog: changelog.md
+  - Development:
+    - Contributing: contributing.md
+    - Code of Conduct: code_of_conduct.md
+
+theme:
+  name: material
+  palette:
+    primary: deep purple
+    accent: teal
+  font:
+    text: Open Sans
+    code: Fira Code
+
+
+markdown_extensions:
+  - admonition
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.tasklist
+  - toc:
+      permalink: "#"
+
+plugins:
+  - search
