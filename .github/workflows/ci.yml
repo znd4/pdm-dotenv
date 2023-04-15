@@ -25,6 +25,8 @@ jobs:
         with:
           python-version: 3.11
           cache: true
+      - name: Install dependencies
+        run: pdm install
       - name: Run coverage
         run: pdm run cov
       - uses: codecov/codecov-action@v3
