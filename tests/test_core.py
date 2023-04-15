@@ -1,3 +1,4 @@
+from pdm.cli.actions import textwrap
 from pdm.project import Project
 from pdm.pytest import PDMCallable
 
@@ -8,12 +9,14 @@ def check_env(project: Project, pdm: PDMCallable) -> None:
             "run",
             "python",
             "-c",
-            f"""
-            import pathlib, os
-            (
-                pathlib.Path("{project.root}") / "foo.txt"
-            ).write_text(os.environ["FOO_BAR_BAZ"])
-            """,
+            textwrap.dedent(
+                f"""
+                import pathlib, os
+                (
+                    pathlib.Path("{project.root}") / "foo.txt"
+                ).write_text(os.environ["FOO_BAR_BAZ"])
+                """
+            ),
         ],
         obj=project,
     )
