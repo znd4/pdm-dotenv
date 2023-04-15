@@ -20,4 +20,4 @@ def cov(session):
 def _test(session: nox.Session, *, cov: bool) -> None:
     session.run("pdm", "install", "-Gtest", external=True)
 
-    session.run("pytest", *(["--cov=src"] if cov else []), "tests/")
+    session.run("pytest", *(["--cov=src"] if cov else []), "tests/", *session.posargs)
