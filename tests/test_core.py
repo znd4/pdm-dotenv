@@ -3,7 +3,7 @@ from pdm.pytest import PDMCallable
 
 
 def check_env(project: Project, pdm: PDMCallable) -> None:
-    pdm(
+    result = pdm(
         [
             "run",
             "python",
@@ -18,7 +18,7 @@ def check_env(project: Project, pdm: PDMCallable) -> None:
         obj=project,
     )
 
-    assert (project.root / "foo.txt").read_text().strip() == "hello"
+    assert (project.root / "foo.txt").read_text().strip() == "hello", result.outputs
 
 
 def test_happy_path(project: Project, pdm: PDMCallable) -> None:
