@@ -47,7 +47,7 @@ doc = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
 post_install = [
   "python",
   "-c",
-  "import shutil, subprocess as sp; if shutil.which('pre-commit'): sp.check_call(['pre-commit', 'install'])",
+  "import shutil, subprocess as sp; sp.check_call(['pre-commit', 'install']) if shutil.which('pre-commit') else None",
 ]
 release = "python -m tasks.release"
 test = "nox --no-venv -s test"
