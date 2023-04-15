@@ -50,8 +50,8 @@ post_install = [
     "import shutil, subprocess as sp; sp.check_call(['pre-commit', 'install']) if shutil.which('pre-commit') else None",
 ]
 release = "python -m tasks.release"
-test = "nox --no-venv -s test"
-cov = "nox --no-venv -s cov {args}"
+test = "nox --no-venv -s test -- {args}"
+cov = "nox --no-venv -s cov -- {args}"
 doc = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
 lint = "pre-commit run --all-files"
 
