@@ -44,7 +44,7 @@ dev = [
 doc = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
 
 [tool.pdm.scripts]
-post_install = "pre-commit install"
+post_install = "if which pre-commit; then pre-commit install; else true; fi"
 release = "python -m tasks.release"
 test = "nox --no-venv -s test"
 cov = "nox --no-venv -s cov"
