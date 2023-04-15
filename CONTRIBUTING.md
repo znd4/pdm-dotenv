@@ -29,20 +29,17 @@ You can run the tests with `pdm run test [ARGS...]`.
 This project uses [nox](https://nox.thea.codes/) as the test runner. See what sessions are list:
 
 ```bash
-nox --list
+pdm run nox --list
 ```
 
 And run the test suite on specified Python versions:
 
 ```bash
-nox -s tests-3.8
+pdm run nox -s tests-3.10
 ```
 
-!!! important "TIPS"
-    `nox` and `pre-commit` in the following section are not list in the `dev-dependencies` of the project,
-    because they can be installed separately to the system and used via the external executable. If you are willing to
-    reproduce the development environment without external dependencies. Run `pdm add -d nox pre-commit` and the
-    corresponding commands should be prefixed with `pdm run` as well.
+> **Note**
+> if you've installed `nox` globally, you can skip the `pdm run`
 
 ## Development
 

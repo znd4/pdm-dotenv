@@ -5,19 +5,20 @@ build-backend = "pdm.backend"
 [project]
 name = "pdm-dotenv"
 description = "A pdm plugin that automatically loads .env files"
-authors = [
-    {name = "Zane Dufour", email = "zane@znd4.me"}
-]
-license = {text = "MIT"}
+authors = [{ name = "Zane Dufour", email = "zane@znd4.me" }]
+license = { text = "MIT" }
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = ["pdm>=2.5.2", "python-dotenv>=1.0.0"]
 dynamic = ["version"]
 
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3"
+    "Programming Language :: Python :: 3",
 ]
+
+[project.entry-points.pdm]
+dotenv = "pdm_dotenv:plugin"
 
 [project.urls]
 Repository = "https://github.com/zdog234/pdm-dotenv"
@@ -30,40 +31,40 @@ source = "scm"
 package-dir = "src"
 
 [tool.pdm.dev-dependencies]
-test = [
-    "pytest>=6.1",
-]
+test = ["pytest>=6.1", "pdm[pytest]>=2.5.2"]
 dev = [
     "towncrier>=19.2",
     "parver>=0.3",
+    "pre-commit>=3.2.2",
+    "nox>=2022.11.21",
+    "black>=23.3.0",
+    "pdm[pytest]>=2.5.2",
 ]
 
-doc = [
-    "mkdocs>=1.1",
-    "mkdocs-material>=6.2",
-]
+doc = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
 
 [tool.pdm.scripts]
+post_install = "pre-commit install"
 release = "python -m tasks.release"
 test = "pytest tests/"
-doc = {shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview"}
+doc = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
 lint = "pre-commit run --all-files"
 
 [tool.black]
 line-length = 100
-target-version = ["py37", "py38", "py39", "py310"]
+target-version = ["py310", "py311"]
 
 [tool.ruff]
 line-length = 100
 select = [
-  "B",    # flake8-bugbear
-  "C4",   # flake8-comprehensions
-  "E",    # pycodestyle
-  "F",    # pyflakes
-  "PGH",  # pygrep-hooks
-  "RUF",  # ruff
-  "W",    # pycodestyle
-  "YTT",  # flake8-2020
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "PGH", # pygrep-hooks
+    "RUF", # ruff
+    "W",   # pycodestyle
+    "YTT", # flake8-2020
 ]
 extend-ignore = ["B018", "B019"]
 src = ["src"]
@@ -80,7 +81,7 @@ known-first-party = ["pdm_dotenv"]
 follow_imports = "silent"
 ignore_missing_imports = true
 disallow_incomplete_defs = true
-disallow_untyped_defs = true
+check_untyped_defs = false
 disallow_untyped_decorators = true
 namespace_packages = true
 mypy_path = "src"
@@ -134,6 +135,4 @@ filter_files = true
 known_first_party = ["pdm_dotenv"]
 
 [tool.pytest.ini_options]
-filterwarnings = [
-  "ignore::DeprecationWarning"
-]
+filterwarnings = ["ignore::DeprecationWarning"]

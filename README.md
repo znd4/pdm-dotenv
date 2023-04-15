@@ -13,14 +13,6 @@ pdm-dotenv requires Python >=3.10
 
 ## Installation
 
-It is recommended to install with `pipx`, if `pipx` haven't been installed yet, refer to the [pipx's docs](https://github.com/pipxproject/pipx)
-
-```bash
-$ pipx install pdm-dotenv
 ```
-
-Alternatively, install with `pip` to the user site:
-
-```bash
-$ python -m pip install --user pdm-dotenv
+pdm self add pdm-dotenv
 ```
