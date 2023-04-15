@@ -46,8 +46,8 @@ doc = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
 [tool.pdm.scripts]
 post_install = "pre-commit install"
 release = "python -m tasks.release"
-test = "pytest tests/"
-cov = "pytest --cov=pdm_dotenv --cov=tests tests/"
+test = "nox --no-venv -s test"
+cov = "nox --no-venv -s cov"
 doc = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
 lint = "pre-commit run --all-files"
 
