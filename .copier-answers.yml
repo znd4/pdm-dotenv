@@ -16,4 +16,3 @@ python_package_import_name: pdm_dotenv
 python_package_requires_python: '>=3.10'
 repository_name: pdm-dotenv
 repository_namespace: zdog234
-
