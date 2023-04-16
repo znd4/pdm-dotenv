@@ -18,3 +18,11 @@ pdm-dotenv requires Python >=3.10
 ```shell
 pdm self add pdm-dotenv
 ```
+
+## Configuration
+
+If you want to use something other than `.env`, such as `.dev.env`, you can set `dotenv.path`, e.g.:
+
+```shell
+pdm config --local dotenv.path .dev.env
+```
