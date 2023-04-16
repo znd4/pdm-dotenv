@@ -15,6 +15,6 @@ pdm-dotenv requires Python >=3.10
 
 ## Installation
 
-```
+```shell
 pdm self add pdm-dotenv
 ```
