@@ -11,7 +11,7 @@ A pdm plugin that automatically loads .env files
 
 ## Requirements
 
-pdm-dotenv requires Python >=3.10
+pdm-dotenv requires Python >=3.8
 
 ## Installation
 
