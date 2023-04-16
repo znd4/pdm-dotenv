@@ -4,7 +4,7 @@ import nox
 
 os.environ.update(PDM_IGNORE_SAVED_PYTHON="1", PDM_USE_VENV="1")
 
-PYTHON_VERSIONS = ("3.10", "3.11")
+PYTHON_VERSIONS = ("3.8", "3.9", "3.10", "3.11")
 
 
 @nox.session(python=PYTHON_VERSIONS)
