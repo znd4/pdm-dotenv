@@ -13,7 +13,7 @@ def check_env(project: Project, pdm: PDMCallable) -> None:
                 f"""
                 import pathlib, os
                 (
-                    pathlib.Path({repr(str(project.root))}) / "foo.txt"
+                    pathlib.Path({str(project.root)!r}) / "foo.txt"
                 ).write_text(os.environ["FOO_BAR_BAZ"])
                 """
             ),
