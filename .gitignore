@@ -8,6 +8,8 @@ pip-wheel-metadata/
 .pytest_cache/
 .mypy_cache/
 
+.ropeproject/
+
 docs/_build/
 docs/site
 
