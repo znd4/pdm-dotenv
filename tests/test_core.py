@@ -1,9 +1,12 @@
 from pdm.cli.actions import textwrap
 from pdm.project import Project
-from pdm.pytest import PDMCallable
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pdm.pytest import PDMCallable
 
 
-def check_env(project: Project, pdm: PDMCallable) -> None:
+def check_env(project: Project, pdm: "PDMCallable") -> None:
     result = pdm(
         [
             "run",
@@ -24,14 +27,14 @@ def check_env(project: Project, pdm: PDMCallable) -> None:
     assert (project.root / "foo.txt").read_text().strip() == "hello", result.outputs
 
 
-def test_happy_path(project: Project, pdm: PDMCallable) -> None:
+def test_happy_path(project: Project, pdm: "PDMCallable") -> None:
     (project.root / ".env").write_text("FOO_BAR_BAZ=hello")
 
     check_env(project, pdm)
     check_env(project, pdm)
 
 
-def test_different_file(project: Project, pdm: PDMCallable) -> None:
+def test_different_file(project: Project, pdm: "PDMCallable") -> None:
     (project.root / ".foo.env").write_text("FOO_BAR_BAZ=hello")
     pdm(
         [

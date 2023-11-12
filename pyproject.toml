@@ -1,6 +1,6 @@
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
 [project]
 name = "pdm-dotenv"
@@ -13,8 +13,8 @@ dependencies = ["pdm>=2.5.2", "python-dotenv>=1.0.0"]
 dynamic = ["version"]
 
 classifiers = [
-  "Development Status :: 3 - Alpha",
-  "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
 ]
 
 [project.entry-points.pdm]
@@ -24,34 +24,42 @@ dotenv = "pdm_dotenv:plugin"
 Repository = "https://github.com/zdog234/pdm-dotenv"
 Homepage = "https://github.com/zdog234/pdm-dotenv"
 
-[tool.pdm.version]
-source = "scm"
+[tool.hatch.version]
+source = "vcs"
 
-[tool.pdm.build]
-package-dir = "src"
+[tool.hatch.envs.default]
+dependencies = ["pytest>=6.1", "pdm[pytest]>=2.5.2", "pytest-cov>=4.0.0"]
+
+scripts.test = "pytest {args:tests}"
+scripts.test-cov = "pytest --cov=src {args:tests}"
+scripts.cov = "hatch run test-cov {args:tests} --cov-report=xml"
+
+[tool.hatch.envs.local]
+extra-dependencies = ["pdbpp", "pre-commit"]
+pre-install-commands = ["pre-commit install"]
+
+[tool.hatch.envs.neovim]
+template = "local"
+extra-dependencies = ["pynvim"]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11"]
 
 [tool.pdm.dev-dependencies]
-test = ["pytest>=6.1", "pdm[pytest]>=2.5.2", "pytest-cov>=4.0.0"]
-dev = [
-  "towncrier>=19.2",
-  "parver>=0.3",
-  "pre-commit>=3.2.2",
-  "nox>=2022.11.21",
-  "black>=23.3.0",
-  "pdm[pytest]>=2.5.2",
-]
+neovim = ["pynvim>=0.4.3"]
+dev = ["towncrier>=19.2", "parver>=0.3", "pre-commit>=3.2.2"]
 
 doc = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
 
 [tool.pdm.scripts]
 post_install = [
-  "python",
-  "-c",
-  "import shutil, subprocess as sp; sp.check_call(['pre-commit', 'install']) if shutil.which('pre-commit') else None",
+    "python",
+    "-c",
+    "import shutil, subprocess as sp; sp.check_call(['pre-commit', 'install']) if shutil.which('pre-commit') else None",
 ]
 release = "python -m tasks.release"
 test = "nox --no-venv -s test -- {args}"
-cov = "nox --no-venv -s cov -- {args}"
+cov = "nox -s cov -- {args}"
 doc = { shell = "cd docs && mkdocs serve", help = "Start the dev server for doc preview" }
 lint = "pre-commit run --all-files"
 
@@ -62,19 +70,19 @@ target-version = ["py38", "py39", "py310", "py311"]
 [tool.ruff]
 line-length = 100
 select = [
-  "B",   # flake8-bugbear
-  "C4",  # flake8-comprehensions
-  "E",   # pycodestyle
-  "F",   # pyflakes
-  "PGH", # pygrep-hooks
-  "RUF", # ruff
-  "W",   # pycodestyle
-  "YTT", # flake8-2020
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "PGH", # pygrep-hooks
+    "RUF", # ruff
+    "W",   # pycodestyle
+    "YTT", # flake8-2020
 ]
 extend-ignore = ["B018", "B019"]
 src = ["src"]
 extend-exclude = ["tests/fixtures"]
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.mccabe]
 max-complexity = 10

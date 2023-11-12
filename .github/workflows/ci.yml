@@ -20,15 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up PDM
-        uses: pdm-project/setup-pdm@main
-        with:
-          python-version: 3.11
-          cache: true
+      - run: pip install hatch
       - name: Install dependencies
-        run: pdm install
+        run: hatch install
       - name: Run coverage
-        run: pdm run cov --cov-report=xml
+        run: hatch run cov --cov-report=xml
       - uses: codecov/codecov-action@v3
   Testing:
     runs-on: ${{ matrix.os }}
