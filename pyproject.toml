@@ -36,7 +36,10 @@ dependencies = [
     "mypy",
     "toml",
 ]
-post-install-commands = ["python -m mypy --install-types"]
+post-install-commands = [
+    "python -m pip freeze",
+    "python -m mypy --install-types",
+]
 
 scripts.test = "pytest {args:tests}"
 scripts.test-cov = "pytest --cov=src {args:tests}"
