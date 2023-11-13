@@ -33,12 +33,7 @@ dependencies = [
     "pdm[pytest]>=2.5.2",
     "pytest-cov>=4.0.0",
     "python-dotenv[cli]",
-    "mypy",
     "toml",
-]
-post-install-commands = [
-    "python -m pip freeze",
-    "python -m mypy --install-types",
 ]
 
 scripts.test = "pytest {args:tests}"
