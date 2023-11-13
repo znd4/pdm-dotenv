@@ -23,7 +23,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-
 jobs:
   build-doc:
     environment:
@@ -37,10 +36,17 @@ jobs:
         with:
           python-version: 3.x
           cache: true
+      - uses: actions/cache@v3
+        id: hatch-cache
+        with:
+          # cache to runner
+          path: hatch-cache
+          key: ${{ hashFiles('pyproject.toml') }}
       - name: Build pages
         run: |
-          pdm install -G doc
-          cd docs && pdm run mkdocs build
+          hatch run \
+            --cache-dir=hatch-cache \
+            docs:build
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
