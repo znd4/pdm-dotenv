@@ -8,7 +8,7 @@
 from typing import Any
 import dotenv
 from pdm.project import ConfigItem, Project
-from pdm.signals import pre_run
+from pdm.signals import pre_invoke
 from pdm.core import Core
 
 
@@ -23,4 +23,4 @@ def plugin(core: Core) -> None:
         "dotenv.path",
         ConfigItem("Path to your .env file", ".env", env_var="PDM_DOTENV_PATH"),
     )
-    pre_run.connect(load_dotenv)
+    pre_invoke.connect(load_dotenv)

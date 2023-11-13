@@ -47,7 +47,7 @@ jobs:
         with:
           # cache to runner
           path: hatch-cache
-          key: ${{ hashFiles('pyproject.toml') }}
+          key: ${{ hashFiles('pyproject.toml') }}-${{ matrix.python-version }}
       - name: Install dependencies
         run: pip install hatch
       - name: Run Tests

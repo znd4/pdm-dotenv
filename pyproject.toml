@@ -28,7 +28,13 @@ Homepage = "https://github.com/zdog234/pdm-dotenv"
 source = "vcs"
 
 [tool.hatch.envs.default]
-dependencies = ["pytest>=6.1", "pdm[pytest]>=2.5.2", "pytest-cov>=4.0.0"]
+dependencies = [
+    "pytest>=6.1",
+    "pdm[pytest]>=2.5.2",
+    "pytest-cov>=4.0.0",
+    "python-dotenv[cli]",
+    "toml",
+]
 
 scripts.test = "pytest {args:tests}"
 scripts.test-cov = "pytest --cov=src {args:tests}"
