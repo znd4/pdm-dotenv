@@ -21,6 +21,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: pip install hatch
+      - uses: actions/cache@v3
+        id: hatch-cache
+        with:
+          # cache to runner
+          path: hatch-cache
+          key: ${{ hashFiles('pyproject.toml') }}
       - name: Run coverage
         run: hatch --cache-dir hatch-cache run cov --cov-report=xml
       - uses: codecov/codecov-action@v3

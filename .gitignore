@@ -16,6 +16,7 @@ docs/site
 .venv/
 venv/
 env/
+site/
 
 .pdm.toml
 __pypackages__/
