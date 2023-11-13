@@ -7,26 +7,21 @@ if TYPE_CHECKING:
     from pdm.pytest import PDMCallable
 
 
-def check_env(project: Project, pdm: "PDMCallable") -> None:
-    result = pdm(
-        [
-            "run",
-            "python",
-            "-c",
-            textwrap.dedent(
-                f"""
-                import pathlib, os
-                (
-                    pathlib.Path({str(project.root)!r}) / "foo.txt"
-                ).write_text(os.environ["FOO_BAR_BAZ"])
-                """
-            ),
-        ],
-        strict=True,
-        obj=project,
-    )
-
-    assert (project.root / "foo.txt").read_text().strip() == "hello", result.outputs
+def check_env(project: Project, pdm: "PDMCallable", environ: tuple[tuple[str, str]]) -> None:
+    for key, val in environ:
+        assert (
+            val
+            == pdm(
+                [
+                    "run",
+                    "python",
+                    "-c",
+                    f"import os; print(os.environ['{key}'])",
+                ],
+                strict=True,
+                obj=project,
+            ).stdout
+        )
 
 
 def test_build(project: Project, pdm: "PDMCallable") -> None:
@@ -69,14 +64,27 @@ def test_build(project: Project, pdm: "PDMCallable") -> None:
 
 
 def test_happy_path(project: Project, pdm: "PDMCallable") -> None:
-    (project.root / ".env").write_text("FOO_BAR_BAZ=hello")
+    environ = (("FOO_BAR_BAZ", "hello"),)
+    for key, val in environ:
+        pdm(["run", "dotenv", "set", key, val])
 
-    check_env(project, pdm)
-    check_env(project, pdm)
+    check_env(project, pdm, environ)
 
 
 def test_different_file(project: Project, pdm: "PDMCallable") -> None:
-    (project.root / ".foo.env").write_text("FOO_BAR_BAZ=hello")
+    environ = (("FOO_BAR_BAZ", "hello"),)
+    for key, val in environ:
+        pdm(
+            [
+                "run",
+                "dotenv",
+                f"--file={'.foo.env'}",
+                "set",
+                key,
+                val,
+            ],
+            obj=project,
+        )
     pdm(
         [
             "config",
@@ -86,4 +94,4 @@ def test_different_file(project: Project, pdm: "PDMCallable") -> None:
         obj=project,
     )
 
-    check_env(project, pdm)
+    check_env(project, pdm, environ)
