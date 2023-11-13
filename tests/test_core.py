@@ -1,13 +1,13 @@
 from pdm.cli.actions import textwrap
 from pdm.project import Project
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 import toml
 
 if TYPE_CHECKING:
     from pdm.pytest import PDMCallable
 
 
-def check_env(project: Project, pdm: "PDMCallable", environ: tuple[tuple[str, str]]) -> None:
+def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, str]]) -> None:
     for key, val in environ:
         assert (
             val
