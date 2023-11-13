@@ -34,6 +34,11 @@ scripts.test = "pytest {args:tests}"
 scripts.test-cov = "pytest --cov=src {args:tests}"
 scripts.cov = "hatch run test-cov {args:tests} --cov-report=xml"
 
+[tool.hatch.envs.docs]
+dependencies = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
+scripts.serve = "mkdocs serve"
+scripts.build = "mkdocs build"
+
 [tool.hatch.envs.local]
 extra-dependencies = ["pdbpp", "pre-commit"]
 pre-install-commands = ["pre-commit install"]
@@ -45,11 +50,6 @@ extra-dependencies = ["pynvim"]
 [[tool.hatch.envs.all.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11"]
 
-[tool.pdm.dev-dependencies]
-neovim = ["pynvim>=0.4.3"]
-dev = ["towncrier>=19.2", "parver>=0.3", "pre-commit>=3.2.2"]
-
-doc = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
 
 [tool.pdm.scripts]
 post_install = [

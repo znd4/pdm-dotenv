@@ -27,21 +27,24 @@ jobs:
         run: hatch run cov --cov-report=xml
       - uses: codecov/codecov-action@v3
   Testing:
-    runs-on: ${{ matrix.os }}
+    runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        python-version: [3.8, 3.9, "3.10", 3.11]
+        python-version: [3.8, 3.9, "3.10", 3.11, 3.12]
         os: [ubuntu-latest, macOS-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up PDM
-        uses: pdm-project/setup-pdm@main
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: true
-
+      - uses: actions/cache@v3
+        id: hatch-cache
+        with:
+          # cache to runner
+          path: hatch-cache
+          key: ${{ hashFiles('pyproject.toml') }}
       - name: Install dependencies
-        run: pip install nox
+        run: pip install hatch
       - name: Run Tests
-        run: nox -s test-${{ matrix.python-version }}
+        run: hatch --cache-dir hatch-cache run test
