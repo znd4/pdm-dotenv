@@ -21,10 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: pip install hatch
-      - name: Install dependencies
-        run: hatch install
       - name: Run coverage
-        run: hatch run cov --cov-report=xml
+        run: hatch --cache-dir hatch-cache run cov --cov-report=xml
       - uses: codecov/codecov-action@v3
   Testing:
     runs-on: "${{ matrix.os }}"
