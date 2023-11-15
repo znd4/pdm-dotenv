@@ -155,3 +155,8 @@ known_first_party = ["pdm_dotenv"]
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning"]
+addopts = [
+    # "-ra",
+    # "-q",
+]
+testpaths = ["tests"]

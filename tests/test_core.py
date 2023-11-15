@@ -1,32 +1,46 @@
 from pdm.cli.actions import textwrap
 from pdm.project import Project
-from typing import TYPE_CHECKING
+import pathlib
+import tempfile
+from typing import TYPE_CHECKING, Tuple, List
 import toml
 
 if TYPE_CHECKING:
     from pdm.pytest import PDMCallable
 
 
-def check_env(project: Project, pdm: "PDMCallable") -> None:
-    result = pdm(
-        [
-            "run",
-            "python",
-            "-c",
-            textwrap.dedent(
-                f"""
-                import pathlib, os
-                (
-                    pathlib.Path({str(project.root)!r}) / "foo.txt"
-                ).write_text(os.environ["FOO_BAR_BAZ"])
-                """
-            ),
-        ],
-        strict=True,
-        obj=project,
-    )
+def dotenv_set(file: pathlib.Path, key: str, val: str) -> List[str]:
+    return [
+        "run",
+        "dotenv",
+        f"--file={file}",
+        "set",
+        key,
+        val,
+    ]
 
-    assert (project.root / "foo.txt").read_text().strip() == "hello", result.outputs
+
+def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, str]]) -> None:
+    for key, val in environ:
+        with tempfile.TemporaryDirectory() as td:
+            fp = pathlib.Path(td) / "foo.txt"
+            fp.touch()
+            pdm(
+                [
+                    "run",
+                    "python",
+                    "-c",
+                    textwrap.dedent(
+                        f"""
+                        import os, pathlib
+                        pathlib.Path({str(fp)!r}).write_text(os.environ.get({key!r}, ""))
+                        """
+                    ),
+                ],
+                strict=True,
+                obj=project,
+            )
+            assert val == fp.read_text().strip()
 
 
 def test_build(project: Project, pdm: "PDMCallable") -> None:
@@ -69,14 +83,25 @@ def test_build(project: Project, pdm: "PDMCallable") -> None:
 
 
 def test_happy_path(project: Project, pdm: "PDMCallable") -> None:
-    (project.root / ".env").write_text("FOO_BAR_BAZ=hello")
+    environ = (("FOO_BAR_BAZ", "hello"),)
+    for key, val in environ:
+        pdm(
+            dotenv_set(project.root / ".env", key, val),
+            obj=project,
+            strict=True,
+        )
 
-    check_env(project, pdm)
-    check_env(project, pdm)
+    check_env(project, pdm, environ)
 
 
 def test_different_file(project: Project, pdm: "PDMCallable") -> None:
-    (project.root / ".foo.env").write_text("FOO_BAR_BAZ=hello")
+    environ = (("FOO_BAR_BAZ", "hello"),)
+    for key, val in environ:
+        pdm(
+            dotenv_set(project.root / ".foo.env", key, val),
+            obj=project,
+            strict=True,
+        )
     pdm(
         [
             "config",
@@ -86,4 +111,4 @@ def test_different_file(project: Project, pdm: "PDMCallable") -> None:
         obj=project,
     )
 
-    check_env(project, pdm)
+    check_env(project, pdm, environ)
