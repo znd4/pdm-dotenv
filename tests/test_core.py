@@ -32,7 +32,7 @@ def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, st
                     textwrap.dedent(
                         f"""
                         import os, pathlib
-                        pathlib.Path({fp.name!r}).write_text(os.environ.get({key!r}, ""))
+                        pathlib.Path({str(fp)!r}).write_text(os.environ.get({key!r}, ""))
                         """
                     ),
                 ],
