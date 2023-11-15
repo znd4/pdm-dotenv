@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 
 def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, str]]) -> None:
     for key, val in environ:
-        with tempfile.NamedTemporaryFile() as f:
-            fp = pathlib.Path(f.name)
+        with tempfile.TemporaryDirectory() as td:
+            fp = pathlib.Path(td) / "foo.txt"
             pdm(
                 [
                     "run",
@@ -21,7 +21,7 @@ def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, st
                     textwrap.dedent(
                         f"""
                         import os, pathlib
-                        pathlib.Path({f.name!r}).write_text(os.environ.get({key!r}, ""))
+                        pathlib.Path({fp.name!r}).write_text(os.environ.get({key!r}, ""))
                         """
                     ),
                 ],
