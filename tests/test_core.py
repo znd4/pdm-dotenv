@@ -1,5 +1,7 @@
 from pdm.cli.actions import textwrap
 from pdm.project import Project
+import pathlib
+import tempfile
 from typing import TYPE_CHECKING, Tuple
 import toml
 
@@ -9,19 +11,24 @@ if TYPE_CHECKING:
 
 def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, str]]) -> None:
     for key, val in environ:
-        assert (
-            val
-            == pdm(
+        with tempfile.NamedTemporaryFile() as f:
+            fp = pathlib.Path(f.name)
+            pdm(
                 [
                     "run",
                     "python",
                     "-c",
-                    f"import os; print(os.environ['{key}'])",
+                    textwrap.dedent(
+                        f"""
+                        import os, pathlib
+                        pathlib.Path({f.name!r}).write_text(os.environ.get({key!r}, ""))
+                        """
+                    ),
                 ],
                 strict=True,
                 obj=project,
-            ).stdout
-        )
+            )
+            assert val == fp.read_text().strip()
 
 
 def test_build(project: Project, pdm: "PDMCallable") -> None:
@@ -66,7 +73,19 @@ def test_build(project: Project, pdm: "PDMCallable") -> None:
 def test_happy_path(project: Project, pdm: "PDMCallable") -> None:
     environ = (("FOO_BAR_BAZ", "hello"),)
     for key, val in environ:
-        pdm(["run", "dotenv", "set", key, val])
+        pdm(
+            [
+                "run",
+                "dotenv",
+                f"--file={project.root / '.env'}",
+                "set",
+                key,
+                val,
+            ],
+            obj=project,
+            strict=True,
+        )
+    print((project.root / ".env").read_text())
 
     check_env(project, pdm, environ)
 
@@ -78,12 +97,13 @@ def test_different_file(project: Project, pdm: "PDMCallable") -> None:
             [
                 "run",
                 "dotenv",
-                f"--file={'.foo.env'}",
+                f"--file={project.root / '.foo.env'}",
                 "set",
                 key,
                 val,
             ],
             obj=project,
+            strict=True,
         )
     pdm(
         [
