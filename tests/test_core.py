@@ -2,11 +2,22 @@ from pdm.cli.actions import textwrap
 from pdm.project import Project
 import pathlib
 import tempfile
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, List
 import toml
 
 if TYPE_CHECKING:
     from pdm.pytest import PDMCallable
+
+
+def dotenv_set(file: pathlib.Path, key: str, val: str) -> List[str]:
+    return [
+        "run",
+        "dotenv",
+        f"--file={file}",
+        "set",
+        key,
+        val,
+    ]
 
 
 def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, str]]) -> None:
@@ -74,18 +85,10 @@ def test_happy_path(project: Project, pdm: "PDMCallable") -> None:
     environ = (("FOO_BAR_BAZ", "hello"),)
     for key, val in environ:
         pdm(
-            [
-                "run",
-                "dotenv",
-                f"--file={project.root / '.env'}",
-                "set",
-                key,
-                val,
-            ],
+            dotenv_set(project.root / ".env", key, val),
             obj=project,
             strict=True,
         )
-    print((project.root / ".env").read_text())
 
     check_env(project, pdm, environ)
 
@@ -94,14 +97,7 @@ def test_different_file(project: Project, pdm: "PDMCallable") -> None:
     environ = (("FOO_BAR_BAZ", "hello"),)
     for key, val in environ:
         pdm(
-            [
-                "run",
-                "dotenv",
-                f"--file={project.root / '.foo.env'}",
-                "set",
-                key,
-                val,
-            ],
+            dotenv_set(project.root / ".foo.env", key, val),
             obj=project,
             strict=True,
         )
