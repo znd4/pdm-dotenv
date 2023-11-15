@@ -24,6 +24,7 @@ def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, st
     for key, val in environ:
         with tempfile.TemporaryDirectory() as td:
             fp = pathlib.Path(td) / "foo.txt"
+            fp.touch()
             pdm(
                 [
                     "run",
