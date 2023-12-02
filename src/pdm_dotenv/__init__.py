@@ -10,11 +10,12 @@ import dotenv
 from pdm.project import ConfigItem, Project
 from pdm.signals import pre_invoke
 from pdm.core import Core
+from pdm.termui import Verbosity
 
 
 def load_dotenv(project: Project, **_: Any) -> None:
     dotenv_path = project.root / project.config["dotenv.path"]
-    project.core.ui.echo(f"Loading dotenv file {dotenv_path}")
+    project.core.ui.echo(f"Loading dotenv file {dotenv_path}", verbosity=Verbosity.NORMAL)
     dotenv.load_dotenv(dotenv_path)
 
 
