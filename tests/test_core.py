@@ -1,46 +1,41 @@
 from pdm.cli.actions import textwrap
+import _pytest
+import pytest
+import typing
 from pdm.project import Project
+from pdm.pytest import RunResult
 import pathlib
 import tempfile
-from typing import TYPE_CHECKING, Tuple, List
+from typing import TYPE_CHECKING, List
 import toml
 
 if TYPE_CHECKING:
     from pdm.pytest import PDMCallable
 
 
-def dotenv_set(file: pathlib.Path, key: str, val: str) -> List[str]:
-    return [
-        "run",
-        "dotenv",
-        f"--file={file}",
-        "set",
-        key,
-        val,
-    ]
+def assert_in_env(
+    pdm_in_project: typing.Callable[[List[str]], RunResult],
+    key: str,
+    val: str,
+) -> None:
+    with tempfile.TemporaryDirectory() as td:
+        fp = pathlib.Path(td)
+        out_path = fp / "foo.txt"
+        out_path.touch()
+        cmd = [
+            "run",
+            "python",
+            "-c",
+            textwrap.dedent(
+                f"""
+                import os, pathlib
+                pathlib.Path({str(out_path)!r}).write_text(os.environ.get({key!r}, ""))
+                """
+            ),
+        ]
+        pdm_in_project(cmd)
 
-
-def check_env(project: Project, pdm: "PDMCallable", environ: Tuple[Tuple[str, str]]) -> None:
-    for key, val in environ:
-        with tempfile.TemporaryDirectory() as td:
-            fp = pathlib.Path(td) / "foo.txt"
-            fp.touch()
-            pdm(
-                [
-                    "run",
-                    "python",
-                    "-c",
-                    textwrap.dedent(
-                        f"""
-                        import os, pathlib
-                        pathlib.Path({str(fp)!r}).write_text(os.environ.get({key!r}, ""))
-                        """
-                    ),
-                ],
-                strict=True,
-                obj=project,
-            )
-            assert val == fp.read_text().strip()
+        assert val == (fp / "foo.txt").read_text().strip()
 
 
 def test_build(project: Project, pdm: "PDMCallable") -> None:
@@ -82,33 +77,61 @@ def test_build(project: Project, pdm: "PDMCallable") -> None:
     assert (project.root / "dist" / f"foo-{exp_ver}-py3-none-any.whl").exists()
 
 
-def test_happy_path(project: Project, pdm: "PDMCallable") -> None:
-    environ = (("FOO_BAR_BAZ", "hello"),)
-    for key, val in environ:
-        pdm(
-            dotenv_set(project.root / ".env", key, val),
-            obj=project,
-            strict=True,
-        )
+def pdm_in_project_factory(pdm: "PDMCallable", project: Project) -> RunResult:
+    def wrapped(args: List[str]) -> RunResult:
+        return pdm(args, strict=True, obj=project)
 
-    check_env(project, pdm, environ)
+    return wrapped
 
 
-def test_different_file(project: Project, pdm: "PDMCallable") -> None:
-    environ = (("FOO_BAR_BAZ", "hello"),)
-    for key, val in environ:
-        pdm(
-            dotenv_set(project.root / ".foo.env", key, val),
-            obj=project,
-            strict=True,
-        )
-    pdm(
+def dotenv_set(pdm_in_project, key, val, dotenv):
+    pdm_in_project(
         [
-            "config",
-            "dotenv.path",
-            ".foo.env",
+            "run",
+            "dotenv",
+            f"--file={dotenv}",
+            "set",
+            key,
+            val,
         ],
-        obj=project,
     )
 
-    check_env(project, pdm, environ)
+
+@pytest.mark.parametrize("quiet", (True, False))
+def test_quiet(project: Project, pdm: "PDMCallable", quiet: bool) -> None:
+    dotenv_set(pdm_in_project_factory(pdm, project), "foo", "bar", dotenv=project.root / ".env")
+
+    cmd = ["run", "python", "-c", "print()"]
+    if quiet:
+        cmd = ["--quiet", *cmd]
+
+    result = pdm(cmd, strict=True, obj=project)
+    assert ("Loading dotenv file" in result.stdout) != quiet
+
+
+ENVIRON = (("FOO_BAR_BAZ", "hello"),)
+
+
+@pytest.fixture(params=[".env", "foo.env", None])
+def dotenv_file(request: _pytest.fixtures.SubRequest, project: Project, pdm: "PDMCallable") -> str:
+    pdm_in_project = pdm_in_project_factory(pdm, project)
+
+    for key, val in ENVIRON:
+        dotenv_set(pdm_in_project, key, val, dotenv=project.root / (request.param or ".env"))
+
+    if request.param:
+        pdm_in_project(
+            [
+                "config",
+                "dotenv.path",
+                request.param,
+            ],
+        )
+
+    return request.param
+
+
+def test_happy_path(dotenv_file, project: Project, pdm: "PDMCallable") -> None:
+    pdm_in_project = pdm_in_project_factory(pdm, project)
+    for key, val in ENVIRON:
+        assert_in_env(pdm_in_project, key, val)
