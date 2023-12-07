@@ -107,7 +107,9 @@ def test_quiet(project: Project, pdm: "PDMCallable", quiet: bool) -> None:
     cmd.extend(["python", "-c", "print()"])
 
     result = pdm(cmd, strict=True, obj=project)
-    assert ("Loading dotenv file" in result.stdout) != quiet
+    loading_snippet = "Loading dotenv file"
+    assert (loading_snippet in result.stdout + result.stderr) != quiet
+    assert loading_snippet not in result.stdout
 
 
 ENVIRON = (("FOO_BAR_BAZ", "hello"),)
