@@ -101,9 +101,10 @@ def dotenv_set(pdm_in_project, key, val, dotenv):
 def test_quiet(project: Project, pdm: "PDMCallable", quiet: bool) -> None:
     dotenv_set(pdm_in_project_factory(pdm, project), "foo", "bar", dotenv=project.root / ".env")
 
-    cmd = ["run", "python", "-c", "print()"]
+    cmd = ["run"]
     if quiet:
-        cmd = ["--quiet", *cmd]
+        cmd.append("--quiet")
+    cmd.extend(["python", "-c", "print()"])
 
     result = pdm(cmd, strict=True, obj=project)
     assert ("Loading dotenv file" in result.stdout) != quiet
