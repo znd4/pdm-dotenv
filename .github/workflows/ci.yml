@@ -16,6 +16,19 @@ on:
       - "*.md"
 
 jobs:
+  Type Checking:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pip install hatch
+      - uses: actions/cache@v3
+        id: hatch-cache
+        with:
+          # cache to runner
+          path: hatch-cache
+          key: ${{ hashFiles('pyproject.toml') }}
+      - name: Run pytype
+        run: hatch --cache-dir hatch-cache pytype src
   Coverage:
     runs-on: ubuntu-latest
     steps:

@@ -42,7 +42,7 @@ scripts.cov = "hatch run test-cov {args:tests} --cov-report=xml"
 
 [tool.hatch.envs.typecheck]
 dependencies = ["pytype"]
-scripts.commit = "git commit"
+scripts.pytype = "pytype {args:src}"
 
 
 [tool.hatch.envs.docs]
