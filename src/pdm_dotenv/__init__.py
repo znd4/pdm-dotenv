@@ -15,7 +15,7 @@ from pdm.termui import Verbosity
 
 def load_dotenv(project: Project, **_: Any) -> None:
     dotenv_path = project.root / project.config["dotenv.path"]
-    project.core.ui.echo(f"Loading dotenv file {dotenv_path}", verbosity=Verbosity.NORMAL)
+    project.core.ui.echo(f"Loading dotenv file {dotenv_path}", err=True, verbosity=Verbosity.NORMAL)
     dotenv.load_dotenv(dotenv_path)
 
 

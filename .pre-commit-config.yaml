@@ -1,3 +1,5 @@
+ci:
+  skip: ["pytype"]
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
@@ -15,9 +17,13 @@ repos:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.0
+  - repo: https://github.com/google/pytype
+    rev: 2023.11.29
     hooks:
-      - id: mypy
-        additional_dependencies:
-          - types-toml
+      - id: pytype
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.7.0
+  #   hooks:
+  #     - id: mypy
+  #       additional_dependencies:
+  #         - types-toml
