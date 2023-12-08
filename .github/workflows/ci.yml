@@ -28,7 +28,7 @@ jobs:
           path: hatch-cache
           key: ${{ hashFiles('pyproject.toml') }}
       - name: Run pytype
-        run: hatch --cache-dir hatch-cache pytype src
+        run: hatch --cache-dir hatch-cache run pytype src
   Coverage:
     runs-on: ubuntu-latest
     steps:
