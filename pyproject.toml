@@ -40,9 +40,8 @@ scripts.test = "pytest {args:tests}"
 scripts.test-cov = "pytest --cov=src {args:tests}"
 scripts.cov = "hatch run test-cov {args:tests} --cov-report=xml"
 
-[tool.hatch.envs.typecheck]
+[tool.hatch.envs.static]
 dependencies = ["pytype"]
-scripts.pytype = "pytype {args:src}"
 
 
 [tool.hatch.envs.docs]

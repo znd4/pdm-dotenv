@@ -23,7 +23,7 @@ repos:
         name: pytype
         language: system
         types: [python]
-        entry: hatch env run pytype
+        entry: hatch run static:pytype
   # - repo: https://github.com/pre-commit/mirrors-mypy
   #   rev: v1.7.0
   #   hooks:
