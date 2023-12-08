@@ -17,10 +17,13 @@ repos:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
 
-  - repo: https://github.com/google/pytype
-    rev: 2023.11.29
+  - repo: local
     hooks:
       - id: pytype
+        name: pytype
+        language: system
+        types: [python]
+        entry: hatch env run -e typecheck pytype
   # - repo: https://github.com/pre-commit/mirrors-mypy
   #   rev: v1.7.0
   #   hooks:

@@ -34,12 +34,16 @@ dependencies = [
     "pytest-cov>=4.0.0",
     "python-dotenv[cli]",
     "toml",
-    "pytype",
 ]
 
 scripts.test = "pytest {args:tests}"
 scripts.test-cov = "pytest --cov=src {args:tests}"
 scripts.cov = "hatch run test-cov {args:tests} --cov-report=xml"
+
+[tool.hatch.envs.typecheck]
+dependencies = ["pytype"]
+scripts.commit = "git commit"
+
 
 [tool.hatch.envs.docs]
 dependencies = ["mkdocs>=1.1", "mkdocs-material>=6.2"]
